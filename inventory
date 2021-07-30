@@ -1,0 +1,8 @@
+all:
+  hosts:
+    jane.lan:
+    jess.lan:
+    amber.lan:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+

@@ -1,0 +1,11 @@
+---
+- hosts: all
+  remote_user: owenn
+  tasks:
+    # upload ssh key                
+    - authorized_key:
+        user: owenn
+        state: present
+        manage_dir: yes
+        key: "{{ lookup('file', '/home/owenn/.ssh/id_rsa.pub') }}"
+# vim:ft=ansible:
