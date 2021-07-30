@@ -13,6 +13,7 @@ first time running the ssh and sudo playbook, run with -k and -K so we get promp
 
 ```
 ansible-playbook  upload-sshkey.yaml -k -K
-ansible-playbook  update-sudo.yaml -K```
+ansible-playbook  update-sudo.yaml -K
+```
 
 Will probably write something flash with DNS and inventory providers.
