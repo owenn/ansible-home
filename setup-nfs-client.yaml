@@ -6,3 +6,11 @@
       ansible.builtin.package:
         name: nfs-common
         state: present
+
+    - name: Mount an NFS volume
+      ansible.posix.mount:
+        src: jane.lan:/d
+        path: /d
+        opts: rw,sync,hard,intr
+        state: mounted
+        fstype: nfs
