@@ -12,7 +12,6 @@ all:
         jane.lan:
     nfsclient:
       hosts:
-        jane.lan:
         jess.lan:
         amber.lan:
         alfred.lan:

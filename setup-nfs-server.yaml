@@ -6,3 +6,16 @@
       ansible.builtin.package:
         name: nfs-kernel-server
         state: present
+
+    - name: add export
+      lineinfile:
+        create: no
+        dest: /etc/exports
+        state: present
+        regexp: '^/d'
+        line: '/d     192.168.1.0/24(rw,sync,no_subtree_check)'
+
+    - name: export everything
+      shell: exportfs -ar
+
+
