@@ -1,0 +1,8 @@
+- hosts: nfsclient
+  become: yes
+  vars:
+  tasks:
+    - name: Install nfs client packages
+      ansible.builtin.package:
+        name: nfs-common
+        state: present

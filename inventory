@@ -3,6 +3,17 @@ all:
     jane.lan:
     jess.lan:
     amber.lan:
+    alfred.lan:
   vars:
     ansible_python_interpreter: /usr/bin/python3
+  children:
+    nfsserver:
+      hosts:
+        jane.lan:
+    nfsclient:
+      hosts:
+        jane.lan:
+        jess.lan:
+        amber.lan:
+        alfred.lan:
 

@@ -1,0 +1,8 @@
+- hosts: nfsserver
+  become: yes
+  vars:
+  tasks:
+    - name: Install nfs server packages
+      ansible.builtin.package:
+        name: nfs-kernel-server
+        state: present
