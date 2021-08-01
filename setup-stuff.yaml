@@ -1,0 +1,16 @@
+- hosts: all
+  become: yes
+  vars:
+  tasks:
+    - name: Install some stuff I like
+      ansible.builtin.package:
+        name: traceroute 
+        state: present
+
+    - name: Install tmux
+      ansible.builtin.package:
+        name: tmux
+        state: present
+
+
+
