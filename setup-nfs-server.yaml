@@ -13,7 +13,7 @@
         dest: /etc/exports
         state: present
         regexp: '^/d'
-        line: '/d     192.168.1.0/24(rw,sync,no_subtree_check)'
+        line: '/d     192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)'
 
     - name: export everything
       shell: exportfs -ar
