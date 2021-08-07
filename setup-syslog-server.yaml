@@ -1,0 +1,52 @@
+- hosts: syslog_server
+  become: yes
+  vars:
+  tasks:
+    - name: create log direction
+      ansible.builtin.file:
+        path: /d/log
+        state: directory
+        mode: '0755'
+        owner: syslog
+
+    - name: enable syslog to listen for remote logs on port 514
+      blockinfile:
+       path: /etc/rsyslog.conf
+       marker_begin: serverport
+       marker: "## <!-- {mark} ANSIBLE MANAGED BLOCK -->"
+       block: |
+        # provides UDP syslog reception
+        module(load="imudp")
+        input(type="imudp" port="514")
+
+        # provides TCP syslog reception
+        module(load="imtcp")
+        input(type="imtcp" port="514")
+       validate: rsyslogd -N1 -f %s
+      notify:
+         - Restart rsyslog
+
+    - name: alter syslog to write to local filesystem
+      blockinfile:
+       path: /etc/rsyslog.conf
+       marker_begin: file location
+       marker: "## <!-- {mark} ANSIBLE MANAGED BLOCK -->"
+       block: |
+          $template remote-incoming-logs,"/d/log/%HOSTNAME%/%PROGRAMNAME%.log"
+          *.* ?remote-incoming-logs
+          stop
+       validate: rsyslogd -N1 -f %s
+      notify:
+         - Restart rsyslog
+
+    - name: Start service rsyslog, if not started
+      ansible.builtin.service:
+       name: rsyslog
+       state: started
+
+  handlers:
+    - name: Restart rsyslog
+      ansible.builtin.service:
+        name: rsyslog
+        state: restarted
+

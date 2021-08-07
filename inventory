@@ -15,4 +15,7 @@ all:
         jess.lan:
         amber.lan:
         alfred.lan:
+    syslog_server:
+      hosts:
+        jane.lan
 
