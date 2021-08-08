@@ -10,32 +10,10 @@
         owner: syslog
 
     - name: enable syslog to listen for remote logs on port 514
-      blockinfile:
-       path: /etc/rsyslog.conf
-       marker_begin: serverport
-       marker: "## <!-- {mark} ANSIBLE MANAGED BLOCK -->"
-       block: |
-        # provides UDP syslog reception
-        module(load="imudp")
-        input(type="imudp" port="514")
-
-        # provides TCP syslog reception
-        module(load="imtcp")
-        input(type="imtcp" port="514")
-       validate: rsyslogd -N1 -f %s
-      notify:
-         - Restart rsyslog
-
-    - name: alter syslog to write to local filesystem
-      blockinfile:
-       path: /etc/rsyslog.conf
-       marker_begin: file location
-       marker: "## <!-- {mark} ANSIBLE MANAGED BLOCK -->"
-       block: |
-          $template remote-incoming-logs,"/d/log/%HOSTNAME%/%PROGRAMNAME%.log"
-          *.* ?remote-incoming-logs
-          stop
-       validate: rsyslogd -N1 -f %s
+      ansible.builtin.copy:
+        src: data/70-remote.conf
+        dest: /etc/rsyslog.d/70-remote.conf
+        validate: rsyslogd -N1 -f %s
       notify:
          - Restart rsyslog
 
