@@ -18,4 +18,7 @@ all:
     syslog_server:
       hosts:
         jane.lan
+    registry_server:
+      hosts:
+        jane.lan
 

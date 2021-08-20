@@ -7,6 +7,7 @@ Lets see how long I maintain these :)
 Install ansible
 ```
 apt install ansible sshpass -y
+ansible-galaxy collection install community.crypto
 ```
 
 first time running the ssh and sudo playbook, run with -k and -K so we get prompted for the passwords.

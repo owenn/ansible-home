@@ -1,0 +1,22 @@
+- hosts: registry_server
+  become: yes
+  vars:
+  tasks:
+    - name: create log direction
+      ansible.builtin.file:
+        path: /d/registry
+        state: directory
+        mode: '0755'
+        owner: root
+
+    - name: docker-registry run
+      docker_container:
+        name: docker-registry
+        image: registry:2
+        ports:
+          - 5000:5000
+        restart: yes
+        volumes:
+          - /d/registry:/var/lib/registry
+
+

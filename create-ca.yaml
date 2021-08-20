@@ -1,0 +1,82 @@
+---
+- hosts: localhost
+  vars:
+    - server_hostname: home.lan
+    - key_size: 512
+    - passphrase: # Set if you want passphrase
+    - key_type: ECC # Others include DSA, ECC, Ed25519, Ed448, X25519, X448
+
+    - country_name: NZ
+    - email_address: dummy@address
+    - organization_name: home
+    - path: data/certificates/
+  tasks:
+    - name: create log direction
+      ansible.builtin.file:
+        path: data/certificates
+        state: directory
+        mode: '0755'
+
+    - name: Generate an OpenSSL private key
+      openssl_privatekey:
+        path: "data/certificates/{{ server_hostname }}_privkey.pem"
+        size: "{{ key_size }}"
+        type: "{{ key_type }}"
+        curve: secp384r1
+        backup: yes
+
+    - name: Generate an OpenSSL Certificate Signing Request with Subject information
+      openssl_csr:
+        path: "{{ path }}/{{ server_hostname }}.csr"
+        privatekey_path: "{{ path }}/{{ server_hostname }}_privkey.pem"
+        country_name: "{{ country_name }}"
+        organization_name: "{{ organization_name }}"
+        email_address: "{{ email_address }}"
+        common_name: "{{ server_hostname }}"
+        basic_constraints:
+          - 'CA:TRUE'
+
+    - name: Generate a Self Signed OpenSSL certificate
+      openssl_certificate:
+        path: "{{ path }}/{{ server_hostname }}_cert.pem"
+        privatekey_path: "{{ path }}/{{ server_hostname }}_privkey.pem"
+        csr_path: "{{ path }}/{{ server_hostname }}.csr"
+        provider: selfsigned
+
+
+    - name: Create private key for new certificate on server_1
+      community.crypto.openssl_privatekey:
+        path: "{{ path }}/wild-lan.key"
+      run_once: true
+
+
+    - name: Generate an OpenSSL Certificate Signing Request with subjectAltName extension
+      community.crypto.openssl_csr:
+        path: "{{ path }}/wild-lan.csr"
+        privatekey_path: "{{ path }}/wild-lan.key"
+        subject_alt_name: 'DNS:*.jane.lan,DNS:jane.lan'
+
+        #- name: Create certificate signing request (CSR) for new certificate
+        #community.crypto.openssl_csr_pipe:
+        #privatekey_path: "{{ path }}/wild-lan.key"
+        #path: "{{ path }}/home-lan.csr"
+        #subject_alt_name:
+        #- "DNS:*.jane.lan"
+        #- "DNS:jane.lan"
+        #run_once: true
+        #register: csr
+
+
+    - name: Sign certificate with our CA
+      community.crypto.x509_certificate:
+        path: "{{ path }}/wild-lan.crt"
+        privatekey_path: "{{ path }}/wild-lan.key"
+        csr_path: "{{ path }}/wild-lan.csr"
+        ownca_path: "{{ path }}/{{ server_hostname }}_cert.pem"
+        ownca_privatekey_path: "{{ path }}/{{ server_hostname }}_privkey.pem"
+        provider: ownca
+    #ownca_privatekey_passphrase: "{{ secret_ca_passphrase }}"
+        ownca_not_after: +365d  # valid for one year
+        ownca_not_before: "-1d"  # valid since yesterday
+      run_once: true
+
