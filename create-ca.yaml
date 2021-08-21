@@ -57,7 +57,7 @@
       community.crypto.openssl_csr:
         path: "{{ path }}/wild-lan.csr"
         privatekey_path: "{{ path }}/wild-lan.key"
-        subject_alt_name: 'DNS:*.jane.lan,DNS:jane.lan'
+        subject_alt_name: 'DNS:*.jane.lan,DNS:jane.lan,DNS:*.lan,DNS:*.k1.lan,DNS:registry.lan'
 
         #- name: Create certificate signing request (CSR) for new certificate
         #community.crypto.openssl_csr_pipe:

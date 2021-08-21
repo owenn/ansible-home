@@ -1,0 +1,25 @@
+- hosts: nginx_server
+  become: yes
+  vars:
+  tasks:
+    - name: Install nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: copy some certs out there
+      ansible.builtin.copy:
+        src: data/certificates/wild-lan.crt
+        dest: /etc/nginx/wild-lan.crt
+      register: cert
+
+    - name: copy some certs out there
+      ansible.builtin.copy:
+        src: data/certificates/wild-lan.key
+        dest: /etc/nginx/wild-lan.key
+      when: cert.changed
+
+    - name: restart nginx
+      service: name=nginx state=restarted enabled=yes
+      when: cert.changed
+

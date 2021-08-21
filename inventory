@@ -24,4 +24,7 @@ all:
     apt_cacher:
       hosts:
         jane.lan
+    nginx_server:
+      hosts:
+        jane.lan
 
