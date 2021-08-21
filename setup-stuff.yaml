@@ -12,5 +12,22 @@
         name: tmux
         state: present
 
+    - name: Install capackage
+      ansible.builtin.package:
+        name: ca-certificates
+        state: present
+
+    - name: get the lan ca out there
+      ansible.builtin.copy:
+        src: data/certificates/home.lan.crt
+        dest: /usr/local/share/ca-certificates
+      notify:
+         - update-ca-trust
+
+  handlers:
+    - name: update-ca-trust
+      shell: update-ca-certificates
+
+
 
 
