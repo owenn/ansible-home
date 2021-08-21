@@ -1,3 +1,4 @@
+# this is very hacky but it works and I have the tasks to sort out later
 ---
 - hosts: localhost
   vars:
@@ -43,6 +44,8 @@
         csr_path: "{{ path }}/{{ server_hostname }}.csr"
         provider: selfsigned
 
+    - name: Create a crt version of the pem
+      shell: openssl x509 -in "{{ path }}/{{ server_hostname }}_cert.pem" -out "{{ path }}/{{ server_hostname }}.crt"
 
     - name: Create private key for new certificate on server_1
       community.crypto.openssl_privatekey:
