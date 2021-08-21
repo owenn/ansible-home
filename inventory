@@ -21,4 +21,7 @@ all:
     registry_server:
       hosts:
         jane.lan
+    apt_cacher:
+      hosts:
+        jane.lan
 

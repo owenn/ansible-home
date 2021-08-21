@@ -1,0 +1,25 @@
+- hosts: apt_cacher
+  become: yes
+  vars:
+  tasks:
+    - name: apt-cache
+      ansible.builtin.file:
+        path: /d/apt-cache
+        state: directory
+        mode: '0755'
+        owner: root
+
+    - name: run docker apt-cache
+      docker_container:
+        name: apt-cacher
+        image: sameersbn/apt-cacher-ng:3.3-20200524
+        ports:
+          - 3142:3142
+        restart: yes
+        volumes:
+          - /d/apt-cache:/var/cache/apt-cacher-ng
+
+            #docker run --name apt-cacher-ng --init -it --rm \
+            #  --publish 3142:3142 \
+            #  --volume /srv/docker/apt-cacher-ng:/var/cache/apt-cacher-ng \
+            #  sameersbn/apt-cacher-ng:3.3-20200524 -h
