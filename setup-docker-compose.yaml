@@ -1,0 +1,38 @@
+- hosts: monitor_server
+  become: yes
+  vars:
+  tasks:
+    - name: Install nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Add the user 'johnd' with a specific uid and a primary group of 'docker'
+      ansible.builtin.user:
+        name: monitor
+        comment: Docker compose user to run some docker containers for services
+        uid: 5000
+        shell: /bin/bash
+        group: docker
+
+    - name: create log direction
+      ansible.builtin.file:
+        path: /d/prometheus/data
+        state: directory
+        mode: '0755'
+        owner: nobody
+
+    - name: Read-only git checkout from github
+      become_user: monitor
+      ansible.builtin.git:
+        repo: https://github.com/owenn/docker-compose.git
+        dest: $HOME/docker-compose
+
+    - name: Create and start services
+      become_user: monitor
+      community.docker.docker_compose:
+        project_src: $HOME/docker-compose
+      register: output
+
+      #    - ansible.builtin.debug:
+      #  var: output

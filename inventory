@@ -27,4 +27,7 @@ all:
     nginx_server:
       hosts:
         jane.lan
+    monitor_server:
+      hosts:
+        jane.lan
 
