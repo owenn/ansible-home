@@ -15,6 +15,13 @@
         shell: /bin/bash
         group: docker
 
+    - name: create house direction
+      ansible.builtin.file:
+        path: /d/homeassistant/config
+        state: directory
+        mode: '0755'
+        owner: nobody
+
     - name: create log direction
       ansible.builtin.file:
         path: /d/prometheus/data
