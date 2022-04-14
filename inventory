@@ -4,6 +4,7 @@ all:
     jess.lan:
     amber.lan:
     alfred.lan:
+    chloe.lan:
   vars:
     ansible_python_interpreter: /usr/bin/python3
   children:
@@ -15,6 +16,7 @@ all:
         jess.lan:
         amber.lan:
         alfred.lan:
+        chloe.lan:
     syslog_server:
       hosts:
         jane.lan

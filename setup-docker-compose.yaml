@@ -29,6 +29,19 @@
         mode: '0755'
         owner: nobody
 
+    - name: create pi-hole directory
+      ansible.builtin.file:
+        path: /d/pihole/
+        state: directory
+        mode: '0755'
+        owner: nobody
+
+    - name: create pi-hole directory etc
+      ansible.builtin.file:
+        path: /d/pihole/etc
+        state: directory
+        mode: '0755'
+
     - name: Read-only git checkout from github
       become_user: monitor
       ansible.builtin.git:
@@ -40,6 +53,7 @@
       community.docker.docker_compose:
         project_src: $HOME/docker-compose
       register: output
+
 
       #    - ansible.builtin.debug:
       #  var: output
