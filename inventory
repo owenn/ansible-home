@@ -1,22 +1,25 @@
 all:
   hosts:
     jane.lan:
-    jess.lan:
-    amber.lan:
-    alfred.lan:
-    chloe.lan:
+    one.lan:
+    two.lan:
+    three.lan:
   vars:
     ansible_python_interpreter: /usr/bin/python3
   children:
+    k3s_nodes:
+      hosts:
+        one.lan:
+        two.lan:
+        three.lan:
     nfsserver:
       hosts:
         jane.lan:
     nfsclient:
       hosts:
-        jess.lan:
-        amber.lan:
-        alfred.lan:
-        chloe.lan:
+        one.lan:
+        two.lan:
+        three.lan:
     syslog_server:
       hosts:
         jane.lan

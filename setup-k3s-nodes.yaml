@@ -1,0 +1,30 @@
+- hosts: k3s_nodes
+  become: yes
+  vars:
+  tasks:
+
+  ## Symlinks stuff it up so lets get rid of it
+  ## 
+    - name: Get stats of a file
+      ansible.builtin.stat:
+        path: /etc/resolv.conf
+      register: sym
+
+    - name: Print a debug message
+      ansible.builtin.debug:
+        msg: "removing the symlink"
+      when: sym.stat.islnk is defined and sym.stat.islnk
+
+    - name: Remove
+      ansible.builtin.file:
+        path: /etc/resolv.conf
+        state: absent
+      when: sym.stat.islnk is defined and sym.stat.islnk
+  ##
+  ##
+    - name: Resolve some 
+      ansible.builtin.copy:
+        src: data/resolv.conf
+        dest: /etc/resolv.conf
+        mode: '0644'
+        force: true
