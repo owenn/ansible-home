@@ -1,0 +1,23 @@
+- hosts: dnsmasq
+  become: yes
+  gather_facts: no
+  vars:
+
+  tasks:
+    - name: Remove file (delete file)
+      local_action: 
+        module: ansible.builtin.file
+        path: data/hosts.segment
+        state: absent
+
+    - name: iterate_through
+      local_action: ansible.builtin.command uvt-kvm ip {{ item }}
+      with_items: "{{groups['vm']}}"
+      register: command_output
+
+    - name: Print output to file
+      ansible.builtin.copy:
+        content: "{{ item }}"
+        dest: data/hosts.segment
+      with_items: "{{ command_output.results }}"  
+      delegate_to: localhost

@@ -1,0 +1,34 @@
+- hosts: vm
+  become: yes 
+  gather_facts: no
+  vars:
+
+  tasks:
+    # - name: create an ec2 instance
+    #   local_action: ansible.builtin.command uvt-kvm create {{inventory_hostname}} release=jammy --ssh-public-key-file data/authorized_keys --memory 1024 --disk 8
+    
+    # - name: check its up
+    #   local_action: ansible.builtin.command uvt-kvm wait {{inventory_hostname}}
+
+    - name: set to autostart
+      local_action: ansible.builtin.command virsh autostart {{inventory_hostname |regex_replace('\.k','')}}
+
+    - name: check k3s installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s
+      register: k3s_installed
+
+    - name: getk3s
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s.sh
+        mode: '0750'
+      when: k3s_installed.stat.exists is false
+
+    - name: install ks3
+      ansible.builtin.command: /tmp/k3s.sh
+      environment:
+        K3S_URL: "https://one.k:6443"
+        # from /var/lib/rancher/k3s/server/node-token 
+        K3S_TOKEN: "K10c9bafb3b3afb69705a081f95f261025e21cac7140dfd69f405b085e44bd26205::server:12345"
+      when: k3s_installed.stat.exists is false

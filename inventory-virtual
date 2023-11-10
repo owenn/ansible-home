@@ -1,0 +1,22 @@
+all:
+  hosts:
+    two
+    three
+    four
+    one
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_user: ubuntu
+  children:
+
+    dnsmasq:
+      hosts:
+        one
+      vars:
+
+    vm: 
+      hosts:
+        two.k:
+        three.k:
+        #four.k:
+        #five.k:

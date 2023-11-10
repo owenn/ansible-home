@@ -1,0 +1,9 @@
+- hosts: vm
+  become: yes
+  gather_facts: no
+  vars:
+  tasks:
+    - name: destroy vm
+      local_action: ansible.builtin.command uvt-kvm destroy {{inventory_hostname}}
+
+
