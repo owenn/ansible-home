@@ -1,0 +1,25 @@
+- hosts: dnsmasq
+  become: yes
+  vars:
+  tasks:
+    - name: Install dnsmasq client packages
+      ansible.builtin.package:
+        name: dnsmasq
+        state: present
+
+    - name: Enable service dnsmasq, and not touch the state
+      ansible.builtin.service:
+        name: dnsmasq
+        enabled: yes
+
+    - name: upload dnsmasq conf file
+      ansible.builtin.copy:
+        src: data/dnsmasq.conf
+        dest: /etc/dnsmasq.conf
+      notify: restart-dnsmasq
+
+  handlers:
+  - name: restart-dnsmasq
+    ansible.builtin.service:
+      name: dnsmasq
+      state: restarted

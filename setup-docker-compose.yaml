@@ -5,6 +5,7 @@
     - name: Install nginx
       ansible.builtin.package:
         name: nginx
+        enabled: true
         state: present
 
     - name: Add the user 'johnd' with a specific uid and a primary group of 'docker'
