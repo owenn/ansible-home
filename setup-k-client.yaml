@@ -1,0 +1,29 @@
+- hosts: k-client
+  become: yes
+  vars:
+
+  tasks:
+
+    - name: check argo-cd client installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/argo
+      register: argo_client
+
+
+#url: https://github.com/argoproj/argo-workflows/releases/download/v3.4.13/argo-linux-amd64.gz
+
+    - name: get argocd client
+      ansible.builtin.get_url:
+        url: http://192.168.122.1/d/archive/argo-linux-amd64
+        dest: /tmp/argo
+        #mode: '0550'
+      when: argo_client.stat.exists is false
+
+    - name: Copy file with owner and permissions
+      ansible.builtin.copy:
+        src: /tmp/argo
+        dest: /usr/local/bin/argo
+        owner: root
+        group: root
+        mode: '0555'
+      when: argo_client.stat.exists is false
