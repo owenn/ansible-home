@@ -1,0 +1,32 @@
+- hosts: k3s
+  become: yes
+  vars:
+  tasks:
+    
+    - name: check k3s installed
+      ansible.builtin.stat:
+        path: /etc/systemd/system/k3s.service
+      register: k3s_installed
+
+    - name: add memory limit to k3.service
+      lineinfile:
+        create: no
+        dest: /etc/systemd/system/k3s.service
+        state: present
+        insertafter: '[Service]'
+        line: 'MemoryLimit=768M'
+      when: k3s_installed.stat.exists is true
+
+    - name: check k3s installed
+      ansible.builtin.stat:
+        path: /etc/systemd/system/k3s-agent.service
+      register: k3s_agent_installed
+
+    - name: add memory limit to k3.service
+      lineinfile:
+        create: no
+        dest: /etc/systemd/system/k3s-agent.service
+        state: present
+        insertafter: '[Service]'
+        line: 'MemoryLimit=768M'
+      when: k3s_agent_installed.stat.exists is true

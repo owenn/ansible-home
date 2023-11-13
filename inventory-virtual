@@ -24,3 +24,11 @@ all:
         three.k:
         #four.k:
         #five.k:
+    k3s:
+      hosts:
+        one.k:
+        two.k:
+        three.k:
+        #four.k:
+        #five.k:
+
