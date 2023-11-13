@@ -1,0 +1,12 @@
+  become: yes
+  gather_facts: no
+  vars:
+
+  tasks:
+    - name: create an ec2 instance
+      local_action: ansible.builtin.command uvt-kvm create {{inventory_hostname}} release=jammy --ssh-public-key-file data/authorized_keys --disk 8
+
+    - name: check its up
+      local_action: ansible.builtin.command uvt-kvm wait {{inventory_hostname}}
+
+
