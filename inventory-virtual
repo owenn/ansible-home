@@ -22,7 +22,7 @@ all:
       hosts:
         two.k:
         three.k:
-        #four.k:
+        four.k:
         #five.k:
     k3s:
       hosts:

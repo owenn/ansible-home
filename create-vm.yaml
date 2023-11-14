@@ -4,14 +4,26 @@
   vars:
 
   tasks:
+
+    - name: "Set machine_name"
+      set_fact:
+        machine_name: "{{inventory_hostname |regex_replace ('.k','') }}"
+      changed_when: false
+
     # - name: create an ec2 instance
     #   local_action: ansible.builtin.command uvt-kvm create {{inventory_hostname}} release=jammy --ssh-public-key-file data/authorized_keys --memory 1024 --disk 8
     
     # - name: check its up
     #   local_action: ansible.builtin.command uvt-kvm wait {{inventory_hostname}}
 
+    - name: list of domains with autostart
+      local_action: ansible.builtin.command virsh list --autostart  --name
+      register: autostart_list
+      changed_when: false
+   
     - name: set to autostart
-      local_action: ansible.builtin.command virsh autostart {{inventory_hostname |regex_replace('\.k','')}}
+      local_action: ansible.builtin.command virsh autostart {{machine_name}}
+      when: machine_name not in autostart_list.stdout
 
     - name: check k3s installed
       ansible.builtin.stat:

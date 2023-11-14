@@ -3,7 +3,7 @@
   vars:
   tasks:
     
-    - name: check k3s installed
+    - name: check k3s server installed
       ansible.builtin.stat:
         path: /etc/systemd/system/k3s.service
       register: k3s_installed
@@ -13,11 +13,14 @@
         create: no
         dest: /etc/systemd/system/k3s.service
         state: present
+        regexp: '^MemoryLimit='
         insertafter: '[Service]'
-        line: 'MemoryLimit=768M'
+        line: 'MemoryLimit=820M'
       when: k3s_installed.stat.exists is true
+      notify:
+        - daemon-reload
 
-    - name: check k3s installed
+    - name: check k3s agent installed
       ansible.builtin.stat:
         path: /etc/systemd/system/k3s-agent.service
       register: k3s_agent_installed
@@ -30,3 +33,10 @@
         insertafter: '[Service]'
         line: 'MemoryLimit=768M'
       when: k3s_agent_installed.stat.exists is true
+      notify:
+        - daemon-reload
+
+  handlers:
+    - name: daemon-reload
+      ansible.builtin.command: systemctl daemon-reload
+
