@@ -1,3 +1,7 @@
+# creates a VM and installs k3s on it
+# requires KVM, virsh and uvt
+# also hardcoded k3s token not ideal
+
 - hosts: vm
   become: yes 
   gather_facts: no
@@ -10,11 +14,18 @@
         machine_name: "{{inventory_hostname |regex_replace ('.k','') }}"
       changed_when: false
 
-    # - name: create an ec2 instance
-    #   local_action: ansible.builtin.command uvt-kvm create {{inventory_hostname}} release=jammy --ssh-public-key-file data/authorized_keys --memory 1024 --disk 8
+    - name: list of domains
+      local_action: ansible.builtin.command virsh list --name
+      register: domain_list
+      changed_when: false
+   
+    - name: create an ec2 instance
+      local_action: ansible.builtin.command uvt-kvm create {{machine_name}} release=jammy --ssh-public-key-file data/authorized_keys --memory 1024 --disk 8
+      when: machine_name not in domain_list.stdout
     
-    # - name: check its up
-    #   local_action: ansible.builtin.command uvt-kvm wait {{inventory_hostname}}
+    - name: check its up
+      local_action: ansible.builtin.command uvt-kvm wait {{machine_name}} --without-ssh
+      changed_when: false
 
     - name: list of domains with autostart
       local_action: ansible.builtin.command virsh list --autostart  --name
@@ -29,6 +40,7 @@
       ansible.builtin.stat:
         path: /usr/local/bin/k3s
       register: k3s_installed
+      changed_when: false
 
     - name: getk3s
       ansible.builtin.get_url:
